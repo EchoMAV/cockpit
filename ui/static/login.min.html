@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Loading...</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <meta insert_dynamic_content_here>
+    <script>
+(function(e) {
+    var t;
+    try {
+        t = window.localStorage;
+        window.localStorage.removeItem("url-root");
+    } catch (n) {
+        t = window.sessionStorage;
+        e.warn(String(n));
+    }
+    var o;
+    var i = window.environment || {};
+    var r = i.OAuth || null;
+    if (r) {
+        if (!r.TokenParam) r.TokenParam = "access_token";
+        if (!r.ErrorParam) r.ErrorParam = "error_description";
+    }
+    var a = /\$\{([^}]+)\}|\$([a-zA-Z0-9_]+)/g;
+    function s(e) {
+        var t = Array.prototype.slice.call(arguments, 1);
+        return e.replace(a, function(e, n, o) {
+            return t[n || o] || "";
+        });
+    }
+    function l(e) {
+        if (window.cockpit_po) {
+            var t = window.cockpit_po[e];
+            if (t && t[1]) return t[1];
+        }
+        return e;
+    }
+    function u() {
+        if (!document.querySelectorAll) return;
+        var e = document.querySelectorAll("[translate]");
+        for (var t = 0; t < e.length; t++) e[t].textContent = l(e[t].textContent);
+    }
+    var c = l;
+    var d, f, p, w;
+    var v = /[?&]?([^=]+)=([^&]*)/g;
+    var g = null;
+    function m(e) {
+        e = e.split("+").join(" ");
+        var t = {};
+        var n;
+        for (;;) {
+            n = v.exec(e);
+            if (!n) break;
+            t[decodeURIComponent(n[1])] = decodeURIComponent(n[2]);
+        }
+        return t;
+    }
+    function y(e) {
+        e = e.trim();
+        if (e[0] == '"') e = e.substr(1, e.length - 2);
+        return e;
+    }
+    if (!e) e = function() {};
+    if (window.location.pathname.indexOf("/cockpit/") === 0 || window.location.pathname.indexOf("/cockpit+") === 0) document.documentElement.setAttribute("class", "inline");
+    function h(e) {
+        return document.getElementById(e);
+    }
+    function b(t) {
+        if (window.console) e.warn("fatal:", t);
+        h("login-again").style.display = "none";
+        h("login-wait-validating").style.display = "none";
+        if (g) {
+            h("login-again").href = g;
+            h("login-again").style.display = "block";
+        }
+        h("login").style.display = "none";
+        h("login-details").style.display = "none";
+        h("login-fatal").style.display = "block";
+        var n = h("login-fatal-message");
+        n.textContent = "";
+        n.appendChild(document.createTextNode(t));
+    }
+    function x(e, t) {
+        var n, o = h(e);
+        if (o) n = window.getComputedStyle(o, ":before");
+        if (!n) return;
+        var i, r = n.content;
+        if (r && r != "none" && r != "normal") {
+            i = r.length;
+            if ((r[0] === '"' || r[0] === "'") && i > 2 && r[i - 1] === r[0]) r = r.substr(1, i - 2);
+            o.innerHTML = r || t;
+        } else {
+            o.removeAttribute("class");
+        }
+    }
+    function k() {
+        function e(e, t) {
+            var n;
+            try {
+                n = t[e];
+            } catch (o) {
+                b(s(c("The web browser configuration prevents Cockpit from running (inaccessible $0)"), e));
+                throw o;
+            }
+            if (n === undefined) {
+                b(s(c("This web browser is too old to run Cockpit (missing $0)"), e));
+                return false;
+            }
+            return true;
+        }
+        return ("MozWebSocket" in window || e("WebSocket", window)) && e("XMLHttpRequest", window) && e("sessionStorage", window) && e("JSON", window) && e("defineProperty", Object) && e("console", window) && e("pushState", window.history) && e("textContent", document);
+    }
+    function T(e) {
+        return e.replace(/^\s+|\s+$/g, "");
+    }
+    function S(e) {
+        var n = document.createElement("a");
+        var r = document.baseURI;
+        var a;
+        if (!r) {
+            a = document.getElementsByTagName("base");
+            if (a.length > 0) r = a[0].href; else r = "/";
+        }
+        e = e || "/";
+        n.href = r;
+        if (n.pathname != "/") {
+            o = n.pathname.replace(/^\/+|\/+$/g, "");
+            t.setItem("url-root", o);
+            if (o && e.indexOf("/" + o) === 0) e = e.replace("/" + o, "") || "/";
+        }
+        if (e.indexOf("/=") === 0) {
+            i.hostname = e.substring(2);
+            e = "/cockpit+" + e.split("/")[1];
+        } else if (e.indexOf("/cockpit/") !== 0 && e.indexOf("/cockpit+") !== 0) {
+            e = "/cockpit";
+        }
+        f = e.split("/")[1];
+        d = "/" + f + "/login";
+        if (o) d = "/" + o + d;
+        w = f;
+        p = d;
+    }
+    function O(e, t) {
+        if (t === undefined) t = h("server-group").style.display === "none";
+        h("option-group").setAttribute("data-state", t);
+        if (t) {
+            h("server-group").style.display = "block";
+            h("option-caret").setAttribute("class", "caret caret-down");
+            h("option-caret").setAttribute("className", "caret caret-down");
+        } else {
+            h("server-group").style.display = "none";
+            h("option-caret").setAttribute("class", "caret caret-right");
+            h("option-caret").setAttribute("className", "caret caret-right");
+        }
+    }
+    function C() {
+        window.onload = null;
+        u();
+        S(window.location.pathname);
+        var e = i.page.title;
+        if (!e || f.indexOf("cockpit+=") === 0) e = i.hostname;
+        document.title = e;
+        if (f.indexOf("cockpit+=") === 0) {
+            h("brand").style.display = "none";
+            h("badge").style.visibility = "hidden";
+        } else {
+            x("badge", "");
+            x("brand", "Cockpit");
+        }
+        h("option-group").addEventListener("click", O);
+        h("server-clear").addEventListener("click", function() {
+            var e = h("server-field");
+            e.value = "";
+            e.focus();
+        });
+        if (!k()) return;
+        var n = t.getItem("authorized-default") || "";
+        if (n.indexOf("password") !== -1) h("authorized-input").checked = true;
+        var o = i["os-release"];
+        if (o) t.setItem("os-release", JSON.stringify(o));
+        var a = window.sessionStorage.getItem("logout-intent") == "explicit";
+        if (a) window.sessionStorage.removeItem("logout-intent");
+        if (r) {
+            h("login-details").style.display = "none";
+            h("login").style.display = "none";
+            if (a) {
+                E();
+                h("login-again").textContent = c("Login Again");
+                b(c("Logout Successful"));
+            } else {
+                L();
+            }
+        } else if (a) {
+            q();
+        } else {
+            I();
+        }
+    }
+    function I() {
+        var e = new XMLHttpRequest();
+        e.open("GET", d, true);
+        e.onreadystatechange = function() {
+            if (e.readyState != 4) {
+                return;
+            } else if (e.status == 200) {
+                F(JSON.parse(e.responseText));
+            } else if (e.status == 401) {
+                q();
+            } else if (e.statusText) {
+                b(decodeURIComponent(e.statusText));
+            } else if (e.status === 0) {
+                q();
+            } else {
+                b(s(c("$0 error"), e.status));
+            }
+        };
+        e.send();
+    }
+    function E() {
+        var e = window.location.href.split("#", 2);
+        g = r.URL;
+        if (r.URL.indexOf("?") > -1) g += "&"; else g += "?";
+        g += "redirect_uri=" + encodeURIComponent(e[0]);
+    }
+    function L() {
+        var e = document.createElement("a");
+        if (!r.URL) return b(c("Cockpit authentication is configured incorrectly."));
+        var t = m(window.location.search);
+        if (!window.location.search && window.location.hash) t = m(window.location.hash.slice(1));
+        var n, o, i;
+        E();
+        if (t[r.TokenParam]) {
+            if (window.sessionStorage.getItem("login-wanted")) {
+                e.href = window.sessionStorage.getItem("login-wanted");
+                S(e.pathname);
+            }
+            n = t[r.TokenParam];
+            h("login-wait-validating").style.display = "block";
+            i = new XMLHttpRequest();
+            i.open("GET", d, true);
+            i.setRequestHeader("Authorization", "Bearer " + n);
+            i.onreadystatechange = function() {
+                if (i.readyState != 4) {
+                    return;
+                } else if (i.status == 200) {
+                    F(JSON.parse(i.responseText));
+                } else {
+                    o = $(i.getResponseHeader("WWW-Authenticate"), i.responseText);
+                    if (o) J(o); else b(i.statusText);
+                }
+            };
+            i.send();
+        } else if (t[r.ErrorParam]) {
+            b(t[r.ErrorParam]);
+        } else {
+            window.sessionStorage.setItem("login-wanted", window.location.href);
+            window.location = g;
+        }
+    }
+    function A() {
+        h("error-group").style.display = "none";
+        h("login-error-message").textContent = "";
+    }
+    function R(e, t) {
+        A();
+        if (e) {
+            if (r) {
+                b(e);
+            } else {
+                P(t);
+                h("login-error-message").textContent = e;
+                h("error-group").style.display = "block";
+            }
+        }
+    }
+    function H(e) {
+        var t = h("server-field").value;
+        if (!t) {
+            R(e, false);
+        } else {
+            A();
+            h("login-error-message").textContent = e;
+            h("error-group").style.display = "block";
+            O(null, true);
+            P();
+        }
+    }
+    function N(e) {
+        var t = h("login-note");
+        if (e) {
+            t.style.display = "block";
+            t.textContent = e;
+        } else {
+            t.innerHTML = "&nbsp;";
+        }
+    }
+    function U() {
+        return i.page.require_host && w.indexOf("cockpit+=") === -1;
+    }
+    function z() {
+        R(null);
+        var e, n = T(h("login-user-input").value);
+        if (n === "") {
+            R(c("User name cannot be empty"));
+        } else if (U() && h("server-field").value === "") {
+            R(c("Please specify the host to connect to"));
+        } else {
+            e = h("server-field").value;
+            if (e) {
+                f = "cockpit+=" + e;
+                d = p.replace("/" + w + "/", "/" + f + "/");
+            } else {
+                f = w;
+                d = p;
+            }
+            h("server-name").textContent = e || i.hostname;
+            h("login-button").removeEventListener("click", z);
+            var o = h("authorized-input").checked ? "password" : "";
+            var r = h("login-password-input").value;
+            t.setItem("authorized-default", o);
+            var a = {
+                Authorization: "Basic " + window.btoa(W(n + ":" + r)),
+                "X-Authorize": o
+            };
+            M("GET", a, false);
+        }
+    }
+    function P(e) {
+        var t = i.page.connect;
+        var n = h("option-group").getAttribute("data-state");
+        h("login-wait-validating").style.display = "none";
+        h("login").style.visibility = "visible";
+        h("login").style.display = "block";
+        h("user-group").style.display = e ? "none" : "block";
+        h("password-group").style.display = e ? "none" : "block";
+        h("conversation-group").style.display = e ? "block" : "none";
+        h("login-button-text").textContent = c("Log In");
+        h("login-password-input").value = "";
+        if (U()) {
+            h("option-group").style.display = "none";
+            n = true;
+        } else {
+            h("option-group").style.display = !t || e ? "none" : "block";
+        }
+        if (!t || e) {
+            h("server-group").style.display = "none";
+        } else {
+            h("server-group").style.display = n ? "block" : "none";
+        }
+        h("login-button").removeAttribute("disabled");
+        if (!e) h("login-button").addEventListener("click", z);
+    }
+    function q() {
+        h("server-name").textContent = document.title;
+        N(c("Log in with your server user account."));
+        h("login-user-input").addEventListener("keydown", function(e) {
+            R(null);
+            if (e.which == 13) h("login-password-input").focus();
+        }, false);
+        var e = function(e) {
+            R(null);
+            if (e.which == 13) z();
+        };
+        h("login-password-input").addEventListener("keydown", e);
+        h("authorized-input").addEventListener("keydown", e);
+        P();
+        h("login-user-input").focus();
+    }
+    function J(e) {
+        var t = e.echo ? "text" : "password";
+        h("conversation-prompt").textContent = e.prompt;
+        var n = h("conversation-message");
+        var o = e.error || e.message;
+        if (o) {
+            n.textContent = o;
+            n.style.display = "block";
+        } else {
+            n.style.display = "none";
+        }
+        var i = h("conversation-input");
+        i.value = "";
+        if (e.default) i.value = e.default;
+        i.setAttribute("type", t);
+        i.focus();
+        R("");
+        function r() {
+            h("conversation-input").removeEventListener("keydown", a);
+            h("login-button").removeEventListener("click", r);
+            R(null, true);
+            G(e.id, h("conversation-input").value);
+        }
+        function a(e) {
+            R(null, true);
+            if (e.which == 13) {
+                r();
+            }
+        }
+        h("conversation-input").addEventListener("keydown", a);
+        h("login-button").addEventListener("click", r);
+        P(true);
+    }
+    function W(e) {
+        return window.unescape(encodeURIComponent(e));
+    }
+    function $(t, n) {
+        var o;
+        var i;
+        var r;
+        var a;
+        if (!t) return null;
+        o = t.split(" ");
+        if (o[0].toLowerCase() !== "x-conversation" && o.length != 3) return null;
+        a = o[1];
+        try {
+            i = window.atob(o[2]);
+        } catch (s) {
+            if (window.console) e.error("Invalid prompt data", s);
+            return null;
+        }
+        try {
+            r = JSON.parse(n);
+        } catch (s) {
+            if (window.console) e.log("Got invalid JSON response for prompt data", s);
+            r = {};
+        }
+        r.id = a;
+        r.prompt = i;
+        return r;
+    }
+    function M(t, n, o) {
+        h("login-button").setAttribute("disabled", "true");
+        var i = new XMLHttpRequest();
+        i.open("GET", d, true);
+        var r;
+        var a;
+        var l;
+        for (l in n) i.setRequestHeader(l, n[l]);
+        i.onreadystatechange = function() {
+            if (i.readyState != 4) {
+                return;
+            } else if (i.status == 200) {
+                var t = JSON.parse(i.responseText);
+                F(t);
+            } else if (i.status == 401) {
+                a = i.getResponseHeader("WWW-Authenticate");
+                if (a && a.toLowerCase().indexOf("x-conversation") === 0) {
+                    r = $(a, i.responseText);
+                    if (r) J(r); else b(c("Internal Error: Invalid challenge header"));
+                } else {
+                    if (window.console) e.log(i.statusText);
+                    if (i.statusText.indexOf("authentication-not-supported") > -1) {
+                        var n = T(h("login-user-input").value);
+                        b(s(c("The server refused to authenticate '$0' using password authentication, and no other supported authentication methods are available."), n));
+                    } else if (i.statusText.indexOf("terminated") > -1) {
+                        R(c("Authentication Failed: Server closed connection"));
+                    } else if (i.statusText.indexOf("no-host") > -1) {
+                        H(c("Unable to connect to that address"));
+                    } else if (i.statusText.indexOf("unknown-hostkey") > -1) {
+                        H(c("Refusing to connect. Hostkey is unknown"));
+                    } else if (i.statusText.indexOf("unknown-host") > -1) {
+                        H(c("Refusing to connect. Host is unknown"));
+                    } else if (i.statusText.indexOf("invalid-hostkey") > -1) {
+                        H(c("Refusing to connect. Hostkey does not match"));
+                    } else if (o) {
+                        R(c("Authentication failed"));
+                    } else {
+                        R(c("Wrong user name or password"));
+                    }
+                }
+            } else if (i.status == 403) {
+                R(decodeURIComponent(i.statusText) || c("Permission denied"));
+            } else if (i.statusText) {
+                b(decodeURIComponent(i.statusText));
+            } else {
+                b(s(c("$0 error"), i.status));
+            }
+            h("login-button").removeAttribute("disabled");
+        };
+        i.send();
+    }
+    function G(e, t) {
+        var n = {
+            Authorization: "X-Conversation " + e + " " + window.btoa(W(t))
+        };
+        M("GET", n, true);
+    }
+    function X(e) {
+        var t = window.setTimeout(function() {
+            t = null;
+            window.location.reload(true);
+        }, 100);
+        if (e && e != window.location.href) window.location = e;
+        window.onbeforeunload = function() {
+            if (t) window.clearTimeout(t);
+            t = null;
+        };
+    }
+    function _(e) {
+        var t = "/" + f + "/@localhost/";
+        if (o) t = "/" + o + t;
+        var n = t + "shell/index.html";
+        var i = new XMLHttpRequest();
+        i.open("GET", t + "manifests.json", true);
+        i.onreadystatechange = function() {
+            if (i.readyState != 4) {
+                return;
+            } else if (i.status == 200) {
+                var t = JSON.parse(i.responseText);
+                var o = t ? t["base1"] : {};
+                if (!o["version"] || o["version"] < "119.x") {
+                    X(n);
+                } else X(e);
+            } else {
+                X(n);
+            }
+        };
+        i.send();
+    }
+    function B(e, t, n) {
+        var o = 0;
+        while (o < e.length) {
+            var i = e.key(o);
+            if (n && i.indexOf("cockpit") !== 0) e.removeItem(i); else if (i.indexOf(t) === 0) e.removeItem(i); else o++;
+        }
+    }
+    function j(e) {
+        B(window.sessionStorage, f, true);
+        t.removeItem("login-data");
+        B(t, f, false);
+        var n;
+        if (e && e["login-data"]) {
+            n = JSON.stringify(e["login-data"]);
+            t.setItem(f + "login-data", n);
+            t.setItem("login-data", n);
+        }
+        if (o) t.setItem("url-root", o);
+    }
+    function F(e) {
+        var t = window.sessionStorage.getItem("login-wanted");
+        var n = h("server-field").value;
+        var i;
+        if (n && f != w) {
+            t = "/=" + n;
+            if (o) t = "/" + o + t;
+        }
+        B(window.sessionStorage, f, false);
+        j(e);
+        if (f.indexOf("cockpit+=") === 0) {
+            _(t);
+        } else {
+            X(t);
+        }
+    }
+    window.onload = C;
+})(window.console);
+//# sourceMappingURL=login.min.js.map
+    </script>
+    <style>
+#option-group,.btn,.cross,button{cursor:pointer}
+.btn,label{font-weight:600}
+.btn,img{vertical-align:middle}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:62.5%;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Open Sans",Helvetica,Arial,sans-serif;font-size:12px;line-height:1.66666667;background-color:#fff}
+a{background:0 0;color:#0099d3;text-decoration:none}
+.btn,.btn:active{background-image:none}
+a:focus{outline:dotted thin;outline:-webkit-focus-ring-color auto 5px;outline-offset:-2px}
+a:active,a:hover{outline:0}
+a:focus,a:hover{color:#00618a;text-decoration:underline}
+img{border:0}
+button,input,select,textarea{font-family:inherit;margin:0;font-size:inherit;line-height:inherit}
+button,input{line-height:normal}
+.btn,.form-control{line-height:1.66666667}
+button,select{text-transform:none}
+button{-webkit-appearance:button;overflow:visible}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+*,:after,:before{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
+p{margin:0 0 10px}
+.container{margin-right:auto;margin-left:auto;padding-left:20px;padding-right:20px}
+.form-group,.row{margin-right:-20px}
+.container:after,.container:before,.row:after,.row:before{content:" ";display:table}
+.container:after,.row:after{clear:both}
+@media (min-width:768px){.container{width:760px}
+}
+@media (min-width:992px){.container{width:980px}
+}
+@media (min-width:1200px){.container{width:1180px}
+}
+.row{margin-left:-20px}
+.col-lg-5,.col-lg-7,.col-md-10,.col-md-2,.col-md-6,.col-sm-1,.col-sm-10,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-5,.col-sm-6,.col-sm-7,.col-xs-12{position:relative;min-height:1px;padding-left:20px;padding-right:20px}
+.col-xs-12{float:left;width:100%}
+@media (min-width:768px){.col-sm-1,.col-sm-10,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-5,.col-sm-6,.col-sm-7{float:left}
+.col-sm-12{width:100%}
+.col-sm-10{width:83.33333333333334%}
+.col-sm-7{width:58.333333333333336%}
+.col-sm-6{width:50%}
+.col-sm-5{width:41.66666666666667%}
+.col-sm-3{width:25%}
+.col-sm-2{width:16.666666666666664%}
+.col-sm-1{width:8.333333333333332%}
+.col-sm-offset-2{margin-left:16.666666666666664%}
+.control-label{text-align:right}
+}
+@media (min-width:992px){.col-md-10,.col-md-2,.col-md-6{float:left}
+.col-md-10{width:83.33333333333334%}
+.col-md-6{width:50%}
+.col-md-2{width:16.666666666666664%}
+}
+@media (min-width:1200px){.col-lg-5,.col-lg-7{float:left}
+.col-lg-7{width:58.333333333333336%}
+.col-lg-5{width:41.66666666666667%}
+}
+label{display:inline-block;margin-bottom:5px}
+.form-control{height:26px;color:#333}
+.form-control[type=text],.form-control[type=password]{display:block;width:100%;padding:2px 6px;font-size:12px;background-color:#fff;background-image:none;border:1px solid #bababa;border-radius:1px;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.075);box-shadow:inset 0 1px 1px rgba(0,0,0,.075);-webkit-transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s;transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s}
+.form-control:focus{border-color:#66afe9;outline:0;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)}
+.form-control:-moz-placeholder{color:#999;font-style:italic}
+.form-control::-moz-placeholder{color:#999;font-style:italic;opacity:1}
+.form-control:-ms-input-placeholder{color:#999;font-style:italic}
+.form-control::-webkit-input-placeholder{color:#999;font-style:italic}
+.help-block{display:block;margin-top:5px;margin-bottom:10px;color:#737373}
+.control-label{margin-top:0;margin-bottom:0;padding-top:3px}
+.form-group{margin-left:-20px}
+.form-group:after{clear:both;margin-bottom:15px}
+.form-group:after,.form-group:before{content:" ";display:table}
+.btn{display:inline-block;margin-bottom:0;text-align:center;border:1px solid transparent;white-space:nowrap;padding:2px 6px;font-size:12px;border-radius:1px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none;-webkit-box-shadow:0 2px 3px rgba(0,0,0,.1);box-shadow:0 2px 3px rgba(0,0,0,.1)}
+.btn:focus{outline:dotted thin;outline:-webkit-focus-ring-color auto 5px;outline-offset:-2px}
+.btn:focus,.btn:hover{color:#4d5258;text-decoration:none}
+.alert-danger,.btn-primary,.login-pf .container .help-block,body{color:#fff}
+.btn:active{outline:0;-webkit-box-shadow:inset 0 2px 8px rgba(0,0,0,.2);box-shadow:inset 0 2px 8px rgba(0,0,0,.2)}
+.btn-lg{padding:6px 10px;font-size:14px;line-height:1.33;border-radius:1px}
+@-ms-viewport{width:device-width}
+.btn-primary{background-color:#189ad1;background-image:-webkit-linear-gradient(top,#1cace8 0,#1998cc 100%);background-image:linear-gradient(to bottom,#1cace8 0,#1998cc 100%);background-repeat:repeat-x;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff1cace8', endColorstr='#ff1998cc', GradientType=0);border-color:#267da1}
+.btn-primary:active,.btn-primary:focus,.btn-primary:hover{background-color:#189ad1;background-image:none;border-color:#267da1;color:#fff}
+.btn-primary:active{background-image:none}
+@font-face{font-family:'Open Sans';font-style:normal;font-weight:400;src:url(cockpit/static/fonts/OpenSans-Regular-webfont.woff) format('woff')}
+@font-face{font-family:'Open Sans';font-style:normal;font-weight:700;src:url(cockpit/static/fonts/OpenSans-Bold-webfont.woff) format('woff')}
+.form-control:hover{border-color:#7BB2DD}
+.login-pf{height:100%}
+.login-pf #brand{position:relative;top:-70px}
+.login-pf #brand img{display:block;margin:0 auto;max-width:100%}
+@media (min-width:768px){.login-pf #brand img{margin:0;text-align:left}
+}
+.login-pf #badge{display:block;margin:20px auto 70px;position:relative;text-align:center}
+.login-pf .container{background-color:#181818;background-color:rgba(255,255,255,.055);clear:right;padding-bottom:40px;padding-top:20px;width:auto}
+@media (min-width:768px){.login-pf #badge{float:right;margin-right:64px;margin-top:50px}
+.login-pf .container{bottom:13%;padding-left:80px;position:absolute;width:100%}
+}
+.caret,.server-box,.spinner{position:relative}
+.login-pf .container .details p:first-child{border-top:1px solid #474747;padding-top:25px;margin-top:25px}
+@media (min-width:768px){.login-pf .container .login-area{border-right:0px solid #474747}
+.login-pf .container .details{padding-left:40px}
+.login-pf .container .details p:first-child{border-top:0;padding-top:0;margin-top:0}
+}
+.login-pf .container .details p{margin-bottom:2px}
+.login-pf .container .control-label{font-size:13px;font-weight:400;text-align:left}
+.login-pf .container .form-group:last-child,.login-pf .container .form-group:last-child .help-block:last-child{margin-bottom:0}
+@-webkit-keyframes rotation{from{-webkit-transform:rotate(0)}
+to{-webkit-transform:rotate(359deg)}
+}
+@keyframes rotation{from{transform:rotate(0)}
+to{transform:rotate(359deg)}
+}
+.spinner{-webkit-animation:rotation .6s infinite linear;animation:rotation .6s infinite linear;border-bottom:4px solid rgba(0,0,0,.25);border-left:4px solid rgba(0,0,0,.25);border-right:4px solid rgba(0,0,0,.25);border-radius:100%;border-top:4px solid rgba(0,0,0,.75);height:24px;margin:4px 0 0;width:24px}
+.alert{padding:7px 11px;margin-bottom:20px;border:2px solid transparent;border-radius:1px}
+.alert-danger{background:0 0;border-color:#c00;font-weight:700}
+#option-group{margin-left:-20px;margin-right:-20px}
+#server-group:before{clear:both;margin-top:5px}
+.cross,.inline .container .help-block{color:#000}
+.login-fatal{font-size:130%}
+#login-wait-validating div{float:left}
+.conversation-prompt{white-space:normal;word-wrap:break-word}
+.control-label{white-space:nowrap;font-size:13px}
+.spinner{border-color:rgba(255,255,255,.75) rgba(255,255,255,.25) rgba(255,255,255,.25)}
+.inline #badge,.inline #brand,.inline #login-details{display:none}
+.inline body{background:0 0!important;color:#000}
+@media (min-width:768px){.login-button-container{float:right}
+}
+.caret{display:inline-block;top:4px}
+.caret-down{transform:rotate(90deg);-moz-transform:rotate(90deg);-webkit-transform:rotate(90deg);transform-origin:8px 8px;-moz-transform-origin:8px 8px;-webkit-transform-origin:8px 8px}
+.cross{position:absolute;right:25px;top:2px;font-weight:700;font-size:14px;opacity:.7}
+#option-group:hover svg,.cross:hover{opacity:1}
+#option-group div{margin-left:-3px;margin-top:3px;margin-bottom:10px}
+#option-group svg{opacity:.7}
+#authorized-input{width:13px;height:13px;padding:0;vertical-align:bottom;margin:8px 5px 3px 0}
+#login-button{padding:7px}
+#login-button .spinner{display:none}
+#login-button[disabled]{padding:0;background-color:#333;background-image:none;border-color:#555}
+#login-button[disabled] .spinner{display:inline-block}
+#login-button[disabled] #login-button-text,.hide-before:before{display:none}
+@media (max-width:480px){.login-pf{display:flex;flex-direction:column-reverse;height:auto;position:relative}
+.row{display:flex;flex-direction:column}
+.login-pf .container{width:100%}
+.login-pf #badge{max-width:33vw;margin:3rem auto;height:8rem;padding:0;background-position:50% 100%}
+.container>.row>.col-sm-12{order:1;position:absolute;bottom:0;left:0;width:100%;text-align:center}
+.login-pf #brand{position:static;font-size:inherit;background-position:50% 50%}
+.details{text-align:center}
+}
+/*# sourceMappingURL=login.min.css.map */    </style>
+    <link href="cockpit/static/branding.css" type="text/css" rel="stylesheet">
+  </head>
+  <body class="login-pf">
+    <span id="badge">
+    </span>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <div id="brand" class="hide-before">
+          </div><!--/#brand-->
+        </div><!--/.col-*-->
+
+        <div id="login" class="col-sm-7 col-md-6 col-lg-5 login-area" style="visibility: hidden;">
+          <div role="form">
+
+            <div id="error-group" class="alert alert-danger" hidden>
+              <span id="login-error-message"></span>
+            </div>
+
+            <div id="conversation-group" class="form-group" hidden>
+              <div class="col-sm-12 col-md-12">
+                <div id="conversation-message"></div>
+                <label id="conversation-prompt" for="conversation-input"></label>
+              </div>
+              <div class="col-sm-12 col-md-12">
+                <input type="password" class="form-control" id="conversation-input">
+              </div>
+            </div>
+
+            <div id="user-group" class="form-group">
+              <label for="login-user-input" class="col-sm-2 col-md-2 control-label" translate>User name</label>
+              <div class="col-sm-10 col-md-10">
+                <input type="text" class="form-control" id="login-user-input" autocorrect="off" autocapitalize="none" autofocus>
+              </div>
+            </div>
+
+            <div id="password-group" class="form-group">
+              <label for="login-password-input" class="col-sm-2 col-md-2 control-label" translate>Password</label>
+              <div class="col-sm-10 col-md-10">
+                <input type="password" class="form-control" id="login-password-input">
+              </div>
+              <div class="col-sm-2 col-md-2"></div>
+              <div class="col-sm-10 col-md-10">
+                <input type="checkbox" class="form-control" id="authorized-input" checked style="display:none;">
+                <label for="authorized-input" class="control-label" translate style="display:none;">Reuse my password for privileged tasks</label>
+              </div>
+            </div>
+
+            <div id="option-group" style="display:none;">
+              <div class="col-sm-5 col-md-5" style="display:none;">
+                <i id="option-caret" class="caret caret-right" aria-hidden="true">
+                    <svg height="16" width="16" viewBox="0 0 16 16">
+                        <polygon fill="#ffffff" points="4,0 4,14 12,7">
+                        </polygon>
+                    </svg>
+                </i>
+                <span translate>Other Options</span>
+              </div>
+            </div>
+
+            <div id="server-group" class="form-group" hidden style="display:none;">
+              <label title="Log in to another system. Leave blank to log in to the local system." for="server-field" class="col-sm-2 col-md-2 control-label" translate>Connect to</label>
+              <div class="col-sm-10 col-md-10 server-box">
+                <input type="text" class="form-control" id="server-field">
+                <span class="cross" id="server-clear" aria-hidden="true">&#x274c;</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-3 col-sm-3 login-button-container">
+                <button class="btn btn-primary btn-lg col-xs-12" id="login-button">
+                  <div class="spinner"></div>
+                  <div id="login-button-text" translate>Log In</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div><!--/.col-*-->
+
+        <div class="col-sm-5 col-md-6 col-lg-7 details" id="login-details" style="display:none;">
+          <p>
+            <label class="control-label"><span translate>Server</span>: <b id="server-name"></b></label>
+          </p>
+          <p id="login-note" class="login-note"></p>
+        </div><!--/.col-*-->
+
+        <div class="col-sm-5 col-md-6 col-lg-7" id="login-wait-validating" hidden>
+          <div class="col-sm-4">
+            <span class="help-block" translate>Validating authentication token</span>
+          </div>
+          <div class="col-sm-1">
+            <div class="spinner col-xs-15">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-12" id="login-fatal" hidden>
+          <span id="login-fatal-message"></span>
+          <a id="login-again" translate hidden>Try Again</a>
+        </div>
+
+      </div><!--/.row-->
+    </div><!--/.container-->
+  </body>
+</html>

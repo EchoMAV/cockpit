@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>General Configuration</title>
+    <meta charset="utf-8">
+    <link href="../base1/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <script src="../base1/cockpit.js"></script>
+</head>
+<body>
+   <div class="pf-c-page">
+        <main class="pf-c-page__main" tabindex="-1">
+            <section class="pf-c-page__main-section pf-m-light">
+                <div class="col-sm-7">
+                    <p class="fw-bold fs-2 ms-3 mt-3">General Configuration</p>   
+                    <p class="ms-3 mt-3">Software Version: <span id='version'></span></p>                   
+                    <button hidden class="pf-c button pf-m-primary" id="enable">Disable</button>
+                    <table class="table caption-top table-borderless ms-3" id="the-table">                        
+                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">Telemtry Link Information</p><p class="fw-light fs-6">The host address used for telemetry data streaming is defined below. These settings must match the GCS being used. Recommend using 224.10.10.10 and 14550 for typical scenarios.</p></td></tr>
+                    <tr>
+                        <td><label class="control-label" for="losHost">Host</label></td>
+                        <td><input id="losHost"></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="losPort">Port</label></td>
+                        <td><input id="losPort"></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="losIface">Interface</label></td>
+                        <td><select id="losIface"></select></td>
+                    </tr>                    
+                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">ATAK CoT Setup</p><p class="fw-light fs-6">These settings are used for the ATAK Cursor-on-target generator. The mulicast address should match the CoT multicast address defined by the TAK network administrator. To disabled the ATAK CoT messages, set period to disabled.</p></td></tr>
+                    <tr>
+                        <td><label class="control-label" for="atakHost">ATAK Host</label></td>
+                        <td><input id="atakHost"></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="atakPort">ATAK Port</label></td>
+                        <td><input id="atakPort"></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="atakPeriod">ATAK Period (s)</label></td>
+                        <td><select id="atakPeriod"></select></td>
+                    </tr>
+                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">FMU Setup</p><p class="fw-light fs-6">Vehicle controller settings. These settings must match the FMU firmware settings. Changing the system ID here does not update the system ID, this value must match the FMU firware settings. Do not change unless you know what you are doing.</p></td></tr>
+                    <tr>
+                        <td><label class="control-label" for="fmuDevice">Linux serial device</label></td>
+                        <td><select id="fmuDevice"></select></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="baudrate">Baud Rate (bps)</label></td>
+                        <td><select id="baudrate"></select></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="fmuId">System ID</label></td>
+                        <td><input id="fmuId"></td>
+                    </tr>                   
+                    <tr>
+                        <td><button class="btn-primary" id="save">Save</button></td>
+                        <td><span id="result"></span></td>
+                    </tr>
+                </table>
+                <pre id="output"></pre>
+            </section>
+        </main>
+    </div>
+
+    <script src="general.js"></script>
+</body>
+</html>

@@ -11,7 +11,7 @@ DATE := $(shell date +%Y-%m-%d_%H%M)
 .EXPORT_ALL_VARIABLES:
 
 LOCAL=/usr/local
-LOCAL_SCRIPTS=temperature.sh
+LOCAL_SCRIPTS=temperature.sh cockpitScript.sh
 LIBSYSTEMD=/lib/systemd/system
 PLATFORM ?= NVID
 SERVICES=temperature.service
@@ -56,7 +56,7 @@ install: dependencies
 	@$(SUDO) cp -rf ui/static/* /usr/share/cockpit/static/	
 	@$(SUDO) cp -rf ui/base1/* /usr/share/cockpit/base1/
 	@[ -d $(LOCAL)/echopilot ] || $(SUDO) mkdir $(LOCAL)/echopilot
-	@$(SUDO) install -Dm755 cockpitScript.sh $(LOCAL)/echopilot/.	
+	@$(SUDO) install -Dm755 version.txt $(LOCAL)/echopilot/.	
 	@for s in $(LOCAL_SCRIPTS) ; do $(SUDO) install -Dm755 $${s} $(LOCAL)/echopilot/$${s} ; done
 	@for c in stop disable ; do $(SUDO) systemctl $${c} $(SERVICES) ; done ; true
 	@for s in $(SERVICES) ; do $(SUDO) install -Dm644 $${s%.*}.service $(LIBSYSTEMD)/$${s%.*}.service ; done

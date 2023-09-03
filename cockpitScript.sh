@@ -25,7 +25,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         -s)
-            ls /dev/ | grep ttyTH
+            ls /dev/ | grep ttyS1  | sed -e "s/.*/\/dev\/&/"
             exit 0
             ;;
         -i)
@@ -37,7 +37,11 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         -v)
-            cat /usr/local/h31/h31proxy/version.txt
+            cat /usr/local/echopilot/version.txt
+            exit 0
+            ;;
+        -u)
+            hostname -I | awk '{print $1}' | cut -d'.' -f1,2
             exit 0
             ;;
     esac

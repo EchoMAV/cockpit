@@ -5,43 +5,19 @@
     <meta charset="utf-8">
     <link href="../base1/bootstrap.min.css" type="text/css" rel="stylesheet">
     <script src="../base1/cockpit.js"></script>
+    <script src="../base1/jquery-3.7.1.min.js"></script>
+
 </head>
 <body>
    <div class="pf-c-page">
         <main class="pf-c-page__main" tabindex="-1">
             <section class="pf-c-page__main-section pf-m-light">
-                <div class="col-sm-7">
-                    <p class="fw-bold fs-2 ms-3 mt-3">General Configuration</p>   
+                <div class="col-sm-12">
+                    <p class="fw-bold fs-2 ms-3 mt-3">MAVLink Telemetry Configuration</p>   
                     <p class="ms-3 mt-3">Software Version: <span id='version'></span></p>                   
                     <button hidden class="pf-c button pf-m-primary" id="enable">Disable</button>
-                    <table class="table caption-top table-borderless ms-3" id="the-table">                        
-                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">Telemtry Link Information</p><p class="fw-light fs-6">The host address used for telemetry data streaming is defined below. These settings must match the GCS being used. Recommend using 224.10.10.10 and 14550 for typical scenarios.</p></td></tr>
-                    <tr>
-                        <td><label class="control-label" for="losHost">Host</label></td>
-                        <td><input id="losHost"></td>
-                    </tr>
-                    <tr>
-                        <td><label class="control-label" for="losPort">Port</label></td>
-                        <td><input id="losPort"></td>
-                    </tr>
-                    <tr>
-                        <td><label class="control-label" for="losIface">Interface</label></td>
-                        <td><select id="losIface"></select></td>
-                    </tr>                    
-                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">ATAK CoT Setup</p><p class="fw-light fs-6">These settings are used for the ATAK Cursor-on-target generator. The mulicast address should match the CoT multicast address defined by the TAK network administrator. To disabled the ATAK CoT messages, set period to disabled.</p></td></tr>
-                    <tr>
-                        <td><label class="control-label" for="atakHost">ATAK Host</label></td>
-                        <td><input id="atakHost"></td>
-                    </tr>
-                    <tr>
-                        <td><label class="control-label" for="atakPort">ATAK Port</label></td>
-                        <td><input id="atakPort"></td>
-                    </tr>
-                    <tr>
-                        <td><label class="control-label" for="atakPeriod">ATAK Period (s)</label></td>
-                        <td><select id="atakPeriod"></select></td>
-                    </tr>
-                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">FMU Setup</p><p class="fw-light fs-6">Vehicle controller settings. These settings must match the FMU firmware settings. Changing the system ID here does not update the system ID, this value must match the FMU firware settings. Do not change unless you know what you are doing.</p></td></tr>
+                    <table class="table caption-top table-borderless ms-3" id="the-table">    
+                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">FMU Setup</p><p class="fw-light fs-6">Please select the serial device and baud rate used for the input of serial telemetry into the Jetson module. </p></td></tr>
                     <tr>
                         <td><label class="control-label" for="fmuDevice">Linux serial device</label></td>
                         <td><select id="fmuDevice"></select></td>
@@ -49,13 +25,49 @@
                     <tr>
                         <td><label class="control-label" for="baudrate">Baud Rate (bps)</label></td>
                         <td><select id="baudrate"></select></td>
+                    </tr>                 
+                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">Network UDP Telemetry Endpoint</p><p class="fw-light fs-6">The endpoint used for UDP telemetry. Given the current IP address of the EchoPilot AI, this endpoint should be in the <strong><span id='ipsubnet1'></span></strong> subnet.</p>
+                        <p class="fw-light fs-6">In Normal (client) mode, the EchoPilot will send messages to the target endpoint. When a GCS detects these messages, it will start communicating back. The GCS does not know about this device until it first receives data.</p>
+                        <p class="fw-light fs-6">In Server mode, the endpoint below is configured to listen for messages from a GCS. Once data is received from a GCS, the EchoPilot will begin sending telemetry to it. In this configuration, EchoPilot AI does not know about the GCS until the GCS first establishes a connection.
+                        </p></td></tr>
+                
+                    <tr>
+                        <td><label class="control-label" for="udpStatus">Status</label></td>
+                        <td><select id="udpStatus">
+                        </select></td>
                     </tr>
                     <tr>
-                        <td><label class="control-label" for="fmuId">System ID</label></td>
-                        <td><input id="fmuId"></td>
-                    </tr>                   
+                        <td><label class="control-label" for="udpMode">Mode</label></td>
+                        <td><select id="udpMode"></select></td>
+                    </tr>
                     <tr>
-                        <td><button class="btn-primary" id="save">Save</button></td>
+                        <td><label class="control-label" for="losHost">Host</label></td>
+                        <td><input id="losHost"></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="losPort">Port</label></td>
+                        <td><input id="losPort"></td>
+                    </tr>                               
+                    <tr><td colspan="2"><p class="fw-bold fs-5 mt-3">Network TCP Telemetry Endpoint</p><p class="fw-light fs-6">The endpoint used for TCP client telemetry. Given the current IP address of the EchoPilot AI, this endpoint should be in the <strong><span id='ipsubnet2'></span></strong> subnet.</p>
+                        <p class="fw-light fs-6">The EchoPilot will send messages to the target endpoint using a TCP connection. When a GCS detects these messages, it will start communicating back. The GCS does not know about this device until it first receives data. A TCP server is running by default on port 5760 of the EchoPilot AI.</p>
+                        </td></tr>
+                
+                    <tr>
+                        <td><label class="control-label" for="tcpStatus">Status</label></td>
+                        <td><select id="tcpStatus">
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="tcpHost">Host</label></td>
+                        <td><input id="tcpHost"></td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label" for="tcpPort">Port</label></td>
+                        <td><input id="tcpPort"></td>
+                    </tr>                               
+                    
+                    <tr>
+                        <td><button class="btn-primary" id="save">Update</button></td>
                         <td><span id="result"></span></td>
                     </tr>
                 </table>

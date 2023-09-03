@@ -3,7 +3,7 @@
 
     "menu": {
         "general": {
-            "label": "General Configuration",
+            "label": "MAVLink Telemtry",
             "path": "general.html",
             "order": 1
         }

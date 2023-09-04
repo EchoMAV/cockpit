@@ -1,5 +1,5 @@
 const scriptLocation = "/usr/local/echopilot/"
-const confLocation = "/usr/local/echopilot/"
+const confLocation = "/etc/mavlink-router/"
 const version = document.getElementById("version");
 const file_location = document.getElementById("file_location");
 const losHost = document.getElementById("losHost");

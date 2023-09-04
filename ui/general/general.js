@@ -1,6 +1,7 @@
 const scriptLocation = "/usr/local/echopilot/"
 const confLocation = "/usr/local/echopilot/"
 const version = document.getElementById("version");
+const file_location = document.getElementById("file_location");
 const losHost = document.getElementById("losHost");
 const losPort = document.getElementById("losPort");
 const tcpHost = document.getElementById("tcpHost");
@@ -46,7 +47,9 @@ function InitPage() {
         ipsubnet1.innerHTML=content;
         ipsubnet2.innerHTML=content;
     })
-    .catch(error => Fail(error));    
+    .catch(error => Fail(error));   
+    
+    file_location.innerHTML = confLocation + "main.conf";
     
     cockpit.file(confLocation + "main.conf")
         .read().then((content, tag) => SuccessReadFile(content))

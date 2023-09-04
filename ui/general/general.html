@@ -18,7 +18,7 @@
                     <div class="col-lg-12 ms-3"><p class="mt-0 mb-0">Software Version: <I><span id='version'></span></I></p> </div>
                     <div class="col-lg-12 ms-3"><p class="mt-1">Mavlink-router provides network connectivity to the autopilot. The settings below can be used to configure the serial port receiving data from the autopilot as well as endpoints on the network. By default, a TCP server is running on port 5760 of the EchoPilot AI. Additional endpoints can be enabled and configured below.</p></div>
                 <div class="row justify-content-start">
-                    <div class="col ms-3"><p class="fw-bold fs-5 mt-3 mb-0">FMU Setup</p><p class="fw-light fs-6">Please select the serial device and baud rate used for the input of serial telemetry into the Jetson module. Default baud rate is 500000.</p></div>   
+                    <div class="col ms-3"><p class="fw-bold fs-5 mt-3 mb-0"><img src="settings_ethernet.svg" class="me-2">FMU Setup</p><p class="fw-light fs-6">Please select the serial device and baud rate used for the input of serial telemetry into the Jetson module. Default baud rate is 500000.</p></div>   
                 </div>
                 <div class="row justify-content-start">
                     <div class="col-2 ms-3"><label class="control-label" for="fmuDevice">Linux serial device</label></div>
@@ -32,7 +32,7 @@
               
 
                 <div class="row justify-content-start">
-                    <div class="col ms-3"><p class="fw-bold fs-5 mt-4 mb-0">Network UDP Telemetry Endpoint</p><p class="fw-light fs-6">Configure the endpoint used for UDP telemetry. Based on the current IP address of the EchoPilot AI, this endpoint should be in the <strong><span id='ipsubnet1'></span></strong> subnet.</p>
+                    <div class="col ms-3"><p class="fw-bold fs-5 mt-4 mb-0"><img src="lan.svg" class="me-2">Network UDP Telemetry Endpoint</p><p class="fw-light fs-6">Configure the endpoint used for UDP telemetry. Based on the current IP address of the EchoPilot AI, this endpoint should be in the <strong><span id='ipsubnet1'></span></strong> subnet.</p>
                         <p class="fw-light fs-6">In Normal (client) mode, the EchoPilot AI will send messages to the target endpoint below. When a Ground Control System (GCS) detects these messages, it will start communicating back. Using Normal/Client Mode, the GCS is listening for a connection and the EchoPilot AT initiates the data flow. Most GCS software listens on port 14550 by default.</p>
                         <p class="fw-light fs-6">In Server mode, the endpoint below is configured to listen for messages from a GCS. Once data is received from a GCS, the EchoPilot AI will begin sending telemetry back to it. In this configuration, the EchoPilot AI does not know about the GCS until the GCS first establishes a connection.
                         </p>   
@@ -57,7 +57,7 @@
 
 
                 <div class="row justify-content-start">
-                    <div class="col ms-3"><p class="fw-bold fs-5 mt-4 mb-0">Network TCP Telemetry Endpoint</p>
+                    <div class="col ms-3"><p class="fw-bold fs-5 mt-4 mb-0"><img src="lan.svg" class="me-2">Network TCP Telemetry Endpoint</p>
                         <p class="fw-light fs-6">Configure the endpoint used for TCP client telemetry. Based on the current IP address of the EchoPilot AI, this endpoint should be in the <strong><span id='ipsubnet2'></span></strong> subnet.</p>
                         <p class="fw-light fs-6">The EchoPilot AI will send messages to the target endpoint by establishing a TCP connection to the endpoint below. When a GCS detects this connection, it will start communicating back on the socket. The GCS does not know about the EchoPilot AI until it first receives data.</p>   
                     </div>
